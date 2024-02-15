@@ -8,7 +8,7 @@ def parse_arguments():
     """
     Parse command line arguments.
     """
-    parser = argparse.ArgumentParser(description='Pass the AWS region to query.')
+    parser = argparse.ArgumentParser(description='Pass the AWS region to the script.')
     parser.add_argument('--region', default='us-east-1', help='The AWS region to query. Default is us-east-1.')
     return parser.parse_args()
 
