@@ -1,8 +1,7 @@
 import boto3
 import argparse
 import sys
-
-from pprint import pprint
+import json
 
 def parse_arguments():
     """
@@ -58,7 +57,7 @@ def main():
     get_instances_by_ami(ec2, result)
     get_ami_info(ec2, result)
 
-    pprint(result)
+    print(json.dumps(result, indent=4))
 
 if __name__ == '__main__':
     main()
