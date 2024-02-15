@@ -55,7 +55,7 @@ resource "aws_lb_target_group" "webserver-tg" {
 }
 
 resource "aws_lb_target_group_attachment" "webserver_attachment" {
-  count = local.instance_count
+  count            = local.instance_count
   target_group_arn = aws_lb_target_group.webserver-tg.arn
   target_id        = module.webserver[count.index].id
 }

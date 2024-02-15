@@ -37,6 +37,3 @@ data "terraform_remote_state" "rds" {
     key    = "fg-assignment/rds.tfstate"
   }
 }
-
-
-# mysql -u admin -h fg-db.cqzvgrcuqcdt.us-east-1.rds.amazonaws.com -P 3306 fgdb -p
