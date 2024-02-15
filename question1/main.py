@@ -1,9 +1,13 @@
 import boto3
+import argparse
 from pprint import pprint
 
-REGION = 'us-east-1'
+parser = argparse.ArgumentParser()
+parser.add_argument('--region', default='us-east-1', help='The AWS region to query for EC2 instances. Default is us-east-1.')
+args = parser.parse_args()
+region = args.region
 
-ec2 = boto3.client('ec2', region_name=REGION)
+ec2 = boto3.client('ec2', region_name=region)
 paginator = ec2.get_paginator('describe_instances')
 response = paginator.paginate().build_full_result()
 
