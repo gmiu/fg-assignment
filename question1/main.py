@@ -1,34 +1,63 @@
 import boto3
-from pprint import pprint
+import argparse
+import sys
+import json
 
-REGION = 'us-east-1'
+def parse_arguments():
+    """
+    Parse command line arguments.
+    """
+    parser = argparse.ArgumentParser(description='Pass the AWS region to the script.')
+    parser.add_argument('--region', default='us-east-1', help='The AWS region to query. Default is us-east-1.')
+    return parser.parse_args()
 
-ec2 = boto3.client('ec2', region_name=REGION)
-paginator = ec2.get_paginator('describe_instances')
-response = paginator.paginate().build_full_result()
+def get_instances_by_ami(ec2, result):
+    """
+    Query the EC2 client for all instances and group them by AMI into the result dictionary.
+    """
+    instance_paginator = ec2.get_paginator('describe_instances')
+    instance_response = instance_paginator.paginate().build_full_result()
 
-result = {}
+    for item in instance_response['Reservations']:
+        for instance in item['Instances']:
+            instance_id = instance['InstanceId']
+            image_id = instance['ImageId']
 
-for item in response['Reservations']:
-    for instance in item['Instances']:
-        instance_id = instance['InstanceId']
-        image_id = instance['ImageId']
+            if image_id in result:
+                result[image_id]['InstanceIds'].append(instance_id)
+            else:
+                result[image_id] = {}
+                result[image_id]['InstanceIds'] = [instance_id]
 
-        if image_id in result:
-            result[image_id]['InstanceIds'].append(instance_id)
-        else:
-            result[image_id] = {}
-            result[image_id]['InstanceIds'] = [instance_id]
+def get_ami_info(ec2, result):
+    """
+    Gather additional information about the AMIs in the result dictionary.
+    """
+    ami_paginator = ec2.get_paginator('describe_images')
+    ami_response = ami_paginator.paginate(ImageIds=list(result.keys())).build_full_result()
 
+    for image in ami_response['Images']:
+        image_id = image['ImageId']
+        result[image_id]['ImageDescription'] = image.get('Description')
+        result[image_id]['ImageName'] = image.get('Name')
+        result[image_id]['ImageLocation'] = image.get('ImageLocation')
+        result[image_id]['OwnerID'] = image.get('OwnerId')
 
-paginator_images = ec2.get_paginator('describe_images')
-response_images = paginator_images.paginate(ImageIds=list(result.keys())).build_full_result()
+def main():
+    try:
+        args = parse_arguments()
+        region = args.region
+    except Exception as e:
+        print(f'Error: {e}')
+        sys.exit(1)
 
-for image in response_images['Images']:
-    image_id = image['ImageId']
-    result[image_id]['ImageDescription'] = image.get('Description')
-    result[image_id]['ImageName'] = image.get('Name')
-    result[image_id]['ImageLocation'] = image.get('ImageLocation')
-    result[image_id]['OwnerID'] = image.get('OwnerId')
+    ec2 = boto3.client('ec2', region_name=region)
+    result = {}
 
-pprint(result)
+    get_instances_by_ami(ec2, result)
+    get_ami_info(ec2, result)
+
+    print(json.dumps(result, indent=4))
+
+if __name__ == '__main__':
+    main()
