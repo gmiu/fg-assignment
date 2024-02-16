@@ -25,6 +25,24 @@ variable "alb_enable_tls" {
   description = "If true, the ALB will be configured with HTTPS on port 443.\nIf false, the ALB will be configured with HTTP on port 443"
 }
 
+variable "alb_certificate_arn" {
+  type        = string
+  default     = ""
+  description = "The ARN of the certificate to use for HTTPS"
+}
+
+variable "route53_zone" {
+  type        = string
+  default     = ""
+  description = "The Route53 zone name"
+}
+
+variable "route53_record" {
+  type        = string
+  default     = ""
+  description = "The Route53 record"
+}
+
 variable "backend_port" {
   type        = number
   default     = 8080

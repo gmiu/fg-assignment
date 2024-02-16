@@ -76,7 +76,10 @@ module "fg_alb" {
   alb_subnet_ids = module.fg_vpc.public_subnet_ids
 
   alb_enable_deletion_protection = false
-  alb_enable_tls                 = false
+  alb_enable_tls                 = true
+
+  route53_zone   = "sbx-tech.gbrlm.com"
+  route53_record = "fg.sbx-tech.gbrlm.com"
 
   backend_port = 8080
 }

@@ -24,6 +24,7 @@
 | Name | Type |
 |------|------|
 | [aws_lb_target_group_attachment.webserver_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group_attachment) | resource |
+| [aws_security_group_rule.allow_webserver_on_rds](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 
 ## Inputs
 

@@ -1,8 +1,3 @@
-locals {
-  alb_certificate_arn = ""
-}
-
-
 module "alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 9.0"
@@ -65,5 +60,42 @@ module "alb" {
       target_type       = "instance"
       create_attachment = false
     }
+  }
+}
+
+locals {
+  create_dns             = var.route53_record != "" && var.route53_zone != ""
+  create_tls_certificate = var.alb_enable_tls && var.alb_certificate_arn == "" && local.create_dns
+  alb_certificate_arn    = local.create_tls_certificate ? module.alb_tls_certificate[0].certificate_arn : var.alb_certificate_arn
+}
+
+module "alb_route53_alias" {
+  source = "./modules/route53_alias"
+
+  count = local.create_dns ? 1 : 0
+
+  alias_zone_name        = var.route53_zone
+  alias_dns_name         = var.route53_record
+  target_dns_name        = module.alb.dns_name
+  target_zone_id         = module.alb.zone_id
+  evaluate_target_health = false
+}
+
+provider "aws" {
+  region = "us-east-1"
+  alias  = "us-east-1"
+}
+
+module "alb_tls_certificate" {
+  source = "./modules/tls"
+
+  count = local.create_tls_certificate ? 1 : 0
+
+  tls_domain_name     = var.route53_record
+  tls_route53_zone_id = module.alb_route53_alias[count.index].zone_id
+  wait_for_validation = true
+
+  providers = {
+    aws = aws.us-east-1
   }
 }
