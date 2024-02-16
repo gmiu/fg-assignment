@@ -49,6 +49,7 @@ module "webserver_sg" {
   ]
 }
 
+# allow MySQL traffic from webserver to RDS
 resource "aws_security_group_rule" "allow_webserver_on_rds" {
   type                     = "ingress"
   from_port                = var.rds_port

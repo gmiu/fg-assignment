@@ -72,3 +72,9 @@ variable "rds_vpc_id" {
   type        = string
   description = "The VPC ID to create the RDS instance in"
 }
+
+variable "bastion_security_group_id" {
+  type        = string
+  default = ""
+  description = "The security group ID of the bastion host"
+}
