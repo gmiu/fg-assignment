@@ -81,6 +81,8 @@ module "fg_alb" {
   alb_enable_deletion_protection = var.alb_enable_deletion_protection
   alb_enable_tls                 = var.alb_enable_tls
 
+  alb_certificate_arn = var.alb_certificate_arn
+
   route53_zone   = var.alb_r53_dns_zone
   route53_record = var.alb_r53_dns_name
 

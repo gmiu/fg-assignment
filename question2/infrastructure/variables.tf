@@ -56,6 +56,12 @@ variable "alb_enable_tls" {
   description = "Enable TLS for the ALB"
 }
 
+variable "alb_certificate_arn" {
+  type        = string
+  default     = ""
+  description = "The ARN of the certificate to use for the ALB"
+}
+
 
 variable "webserver_key_name" {
   type        = string
