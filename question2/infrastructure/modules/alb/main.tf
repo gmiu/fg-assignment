@@ -48,10 +48,10 @@ module "alb" {
       }
     }
     https = {
-      port     = 443
-      protocol = var.alb_enable_tls ? "HTTPS" : "HTTP"
+      port            = 443
+      protocol        = var.alb_enable_tls ? "HTTPS" : "HTTP"
       certificate_arn = var.alb_enable_tls ? local.alb_certificate_arn : null
-      
+
       forward = {
         target_group_key = "http"
       }
@@ -60,9 +60,9 @@ module "alb" {
 
   target_groups = {
     http = {
-      backend_protocol = "HTTP"
-      backend_port     = 80
-      target_type      = "instance"
+      backend_protocol  = "HTTP"
+      backend_port      = 80
+      target_type       = "instance"
       create_attachment = false
     }
   }
