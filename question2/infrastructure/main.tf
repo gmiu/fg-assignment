@@ -77,6 +77,8 @@ module "fg_alb" {
 
   alb_enable_deletion_protection = false
   alb_enable_tls                 = false
+
+  backend_port = 8080
 }
 
 output "fg_alb_dns_name" {
@@ -100,6 +102,7 @@ module "fg_webserver" {
   webserver_subnet_ids = module.fg_vpc.private_subnet_ids
 
   http_target_group_arn = module.fg_alb.alb_target_group_http_arn
+  http_port             = 8080
 
   bastion_security_group_id = module.fg_bastion.bastion_security_group_id
   alb_security_group_id     = module.fg_alb.alb_security_group_id

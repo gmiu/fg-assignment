@@ -24,3 +24,9 @@ variable "alb_enable_tls" {
   default     = false
   description = "If true, the ALB will be configured with HTTPS on port 443.\nIf false, the ALB will be configured with HTTP on port 443"
 }
+
+variable "backend_port" {
+  type        = number
+  default     = 8080
+  description = "The port of the backend service"
+}

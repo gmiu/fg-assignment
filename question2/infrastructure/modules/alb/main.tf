@@ -53,15 +53,15 @@ module "alb" {
       certificate_arn = var.alb_enable_tls ? local.alb_certificate_arn : null
 
       forward = {
-        target_group_key = "http"
+        target_group_key = "http_8080"
       }
     }
   }
 
   target_groups = {
-    http = {
+    http_8080 = {
       backend_protocol  = "HTTP"
-      backend_port      = 80
+      port              = var.backend_port
       target_type       = "instance"
       create_attachment = false
     }
