@@ -36,13 +36,6 @@ module "webserver_sg" {
       description              = "ALB HTTP traffic"
       source_security_group_id = var.alb_security_group_id
     },
-    {
-      from_port                = var.rds_port
-      to_port                  = var.rds_port
-      protocol                 = "tcp"
-      description              = "RDS MySQL traffic"
-      source_security_group_id = var.rds_security_group_id
-    },
   ]
 
   egress_with_cidr_blocks = [
@@ -54,6 +47,15 @@ module "webserver_sg" {
       cidr_blocks = "0.0.0.0/0"
     },
   ]
+}
+
+resource "aws_security_group_rule" "allow_webserver_on_rds" {
+  type        = "ingress"
+  from_port   = var.rds_port
+  to_port     = var.rds_port
+  protocol    = "tcp"
+  security_group_id = var.rds_security_group_id
+  source_security_group_id = module.webserver_sg.security_group_id
 }
 
 resource "aws_lb_target_group_attachment" "webserver_attachment" {
