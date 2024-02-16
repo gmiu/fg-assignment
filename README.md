@@ -99,7 +99,7 @@ The S3 backend configs can be passed from command line as arguments or, easier, 
 region         = "us-east-1"
 bucket         = "example-tfstate"
 dynamodb_table = "example-tfstate-lock"
-key            = "fg-assignment/fgq1.tfstate"
+key            = "fg-assignment/question1.tfstate"
 
 ❯ terraform init -backend-config=config/remote.config
 
@@ -152,3 +152,91 @@ Terraform will perform the following actions:
 
 Plan: 47 to add, 0 to change, 0 to destroy.
 ```
+
+
+## Question #2
+
+### Structure
+In the `question2` directory you can find the following:
+- `infrastructure`: contains the Terraform module that was requested
+- `test_app`: a simple Flask app I deployed to test everything works as requested
+
+`infrastructure` directory structure:
+- `*.tf`: the tf files for the main module that deploys the infrastructure
+- `modules/`: reusable modules for various infra components that are called used inside `infrastructure/main.tf`
+
+I will not provide documentation for the deployment of the test_app, it's just some easy setup I came up quickly and it may be a bit messy...
+
+### Terraform
+#### Initialisation
+This Terraform project is using S3 as state backend. If you need to use another backend, modify the `backend.tf` file accordingly.
+The S3 backend configs can be passed from command line as arguments or, easier, from a file like below:
+```
+❯ cd question2/infrastructure/
+❯ cat config/remote.config
+region         = "us-east-1"
+bucket         = "example-tfstate"
+dynamodb_table = "example-tfstate-lock"
+key            = "fg-assignment/question2.tfstate"
+
+❯ terraform init -backend-config=config/remote.config
+
+Initializing the backend...
+Initializing modules...
+[...]
+```
+
+#### Terraform plan/apply
+Terraform plan/apply requires some input variables to be passed to the module. Please check `infrastructure/README.md` for the main module terraform-docs in order to explore all the variables.
+Here is an example tfvar for the module:
+```
+❯ cat config/variables.tfvars
+alb_enable_deletion_protection = false
+alb_enable_tls                 = false
+aws_region                     = "us-east-1"
+az_count                       = 2
+backend_webserver_port         = 8080
+bastion_key_name               = "example-key"
+bastion_ssh_allow_cidr_blocks  = "10.0.0.77/32"
+vpc_cidr_block                 = "10.0.0.0/24"
+webserver_key_name             = "example-key"
+
+❯ terraform plan -var-file config/variables.tfvars
+Acquiring state lock. This may take a few moments...
+module.fg_database.module.rds.module.db_instance.random_id.snapshot_identifier[0]: Refreshing state... [id=O6YZ2Q]
+[...]
+```
+
+#### Route53 and TLS support
+##### Route53 A record
+By default, the module will not create any A record in Route53 and the app will be available at the ALB DNS name created by default by AWS.
+If you wish to manage the DNS in Route53, you can pass the following variables to the module:
+```
+alb_r53_dns_name = "www.example.com"
+alb_r53_dns_zone = "example.com"
+```
+
+The module will not create the Route53 zone. It assumes it is already created under the same AWS account. When these two are configured, the module will create and alias A record that will point to the ALB.
+
+##### TLS certificate
+By default, the module will not configure TLS for the endpoint. In order two enable TLS configuration, pass the following variable to the module:
+```
+alb_enable_tls = true
+```
+
+###### TLS for existing ACM certificate
+If you already have a certificate ARN for an existing ACM certificate, you can pass it through the `alb_certificate_arn` variable.
+
+###### Configure new ACM certificate
+The module is capable of creating a new ACM certificate for the DNS name you pass via `alb_r53_dns_name` variable.
+```
+alb_enable_tls   = true
+alb_r53_dns_name = "www.example.com"
+alb_r53_dns_zone = "example.com"
+```
+### Some screenshots with the app in action (we can go over in more details during the meeting)
+![alt text](question2/screenshots/image.png)
+![alt text](question2/screenshots/image-1.png)
+![alt text](question2/screenshots/image-2.png)
+![alt text](question2/screenshots/image-3.png)
+![alt text](question2/screenshots/image-4.png)
