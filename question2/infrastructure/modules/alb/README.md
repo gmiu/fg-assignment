@@ -15,6 +15,8 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_alb"></a> [alb](#module\_alb) | terraform-aws-modules/alb/aws | ~> 9.0 |
+| <a name="module_alb_route53_alias"></a> [alb\_route53\_alias](#module\_alb\_route53\_alias) | ./modules/route53_alias | n/a |
+| <a name="module_alb_tls_certificate"></a> [alb\_tls\_certificate](#module\_alb\_tls\_certificate) | ./modules/tls | n/a |
 
 ## Resources
 
@@ -24,11 +26,15 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_alb_certificate_arn"></a> [alb\_certificate\_arn](#input\_alb\_certificate\_arn) | The ARN of the certificate to use for HTTPS | `string` | `""` | no |
 | <a name="input_alb_enable_deletion_protection"></a> [alb\_enable\_deletion\_protection](#input\_alb\_enable\_deletion\_protection) | If true, deletion of the ALB will be protected | `bool` | `false` | no |
 | <a name="input_alb_enable_tls"></a> [alb\_enable\_tls](#input\_alb\_enable\_tls) | If true, the ALB will be configured with HTTPS on port 443.<br>If false, the ALB will be configured with HTTP on port 443 | `bool` | `false` | no |
 | <a name="input_alb_name"></a> [alb\_name](#input\_alb\_name) | The name of the ALB | `string` | n/a | yes |
 | <a name="input_alb_subnet_ids"></a> [alb\_subnet\_ids](#input\_alb\_subnet\_ids) | The subnet IDs of the ALB | `list(string)` | n/a | yes |
 | <a name="input_alb_vpc_id"></a> [alb\_vpc\_id](#input\_alb\_vpc\_id) | The VPC ID of the ALB | `string` | n/a | yes |
+| <a name="input_backend_port"></a> [backend\_port](#input\_backend\_port) | The port of the backend service | `number` | `8080` | no |
+| <a name="input_route53_record"></a> [route53\_record](#input\_route53\_record) | The Route53 record | `string` | `""` | no |
+| <a name="input_route53_zone"></a> [route53\_zone](#input\_route53\_zone) | The Route53 zone name | `string` | `""` | no |
 
 ## Outputs
 
