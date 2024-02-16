@@ -8,7 +8,9 @@
 
 ## Providers
 
-No providers.
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.33 |
 
 ## Modules
 
@@ -19,12 +21,15 @@ No providers.
 
 ## Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [aws_security_group_rule.allow_bastion_on_rds](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_bastion_security_group_id"></a> [bastion\_security\_group\_id](#input\_bastion\_security\_group\_id) | The security group ID of the bastion host | `string` | `""` | no |
 | <a name="input_rds_allocated_storage"></a> [rds\_allocated\_storage](#input\_rds\_allocated\_storage) | The allocated storage in gigabytes | `number` | `5` | no |
 | <a name="input_rds_db_family"></a> [rds\_db\_family](#input\_rds\_db\_family) | The family of the DB parameter group | `string` | `"mysql8.0"` | no |
 | <a name="input_rds_db_name"></a> [rds\_db\_name](#input\_rds\_db\_name) | The DB name to create. If omitted, no database is created initially | `string` | `""` | no |

@@ -1,9 +1,7 @@
 data "aws_availability_zones" "available" {}
 
 locals {
-  cidr_block = "10.0.0.0/24"
-  az_count   = 2
-  azs        = slice(data.aws_availability_zones.available.names, 0, local.az_count)
+  azs = slice(data.aws_availability_zones.available.names, 0, var.az_count)
 }
 
 # Create the VPC
@@ -12,12 +10,14 @@ module "fg_vpc" {
 
   vpc_name = "fg-vpc"
 
-  cidr_block = local.cidr_block
-  az_count   = local.az_count
+  cidr_block = var.vpc_cidr_block
+  az_count   = var.az_count
 
-  public_subnets   = [for k, v in local.azs : cidrsubnet(local.cidr_block, 3, k)]
-  private_subnets  = [for k, v in local.azs : cidrsubnet(local.cidr_block, 3, k + 2)]
-  database_subnets = [for k, v in local.azs : cidrsubnet(local.cidr_block, 3, k + 4)]
+  # Split the VPC CIDR into /27s for the public, private, and database subnets
+  # Should be improved to accomodate more than 2 AZs per subnet
+  public_subnets   = [for k, v in local.azs : cidrsubnet(var.vpc_cidr_block, 3, k)]
+  private_subnets  = [for k, v in local.azs : cidrsubnet(var.vpc_cidr_block, 3, k + 2)]
+  database_subnets = [for k, v in local.azs : cidrsubnet(var.vpc_cidr_block, 3, k + 4)]
 }
 
 # Create the bastion host
@@ -25,12 +25,12 @@ module "fg_bastion" {
   source = "./modules/bastion"
 
   bastion_name     = "fg-bastion"
-  bastion_key_name = "simple-ec2-key"
+  bastion_key_name = var.bastion_key_name
 
   bastion_vpc_id    = module.fg_vpc.vpc_id
   bastion_subnet_id = module.fg_vpc.public_subnet_ids[0]
 
-  ssh_allow_cidr_blocks = "188.26.90.200/32"
+  ssh_allow_cidr_blocks = var.bastion_ssh_allow_cidr_blocks
 }
 
 output "fg_bastion_public_ip" {
@@ -53,15 +53,16 @@ module "fg_database" {
   bastion_security_group_id = module.fg_bastion.bastion_security_group_id
 }
 
-output "fg_database_endpoint" {
-  value       = module.fg_database.rds_endpoint
-  description = "The endpoint of the RDS MySQL DB"
-}
-
 output "fg_database_address" {
   value       = module.fg_database.rds_address
   description = "The address of the RDS MySQL DB"
 }
+
+output "fg_database_endpoint" {
+  value       = module.fg_database.rds_address
+  description = "The endpoint of the RDS MySQL DB"
+}
+
 
 output "fg_database_master_user_secret_arn" {
   value       = module.fg_database.rds_master_user_secret_arn
@@ -77,13 +78,13 @@ module "fg_alb" {
   alb_vpc_id     = module.fg_vpc.vpc_id
   alb_subnet_ids = module.fg_vpc.public_subnet_ids
 
-  alb_enable_deletion_protection = false
-  alb_enable_tls                 = true
+  alb_enable_deletion_protection = var.alb_enable_deletion_protection
+  alb_enable_tls                 = var.alb_enable_tls
 
-  route53_zone   = "sbx-tech.gbrlm.com"
-  route53_record = "fg.sbx-tech.gbrlm.com"
+  route53_zone   = var.alb_r53_dns_zone
+  route53_record = var.alb_r53_dns_name
 
-  backend_port = 8080
+  backend_port = var.backend_webserver_port
 }
 
 output "fg_alb_dns_name" {
@@ -91,9 +92,10 @@ output "fg_alb_dns_name" {
   description = "The DNS name of the ALB"
 }
 
-output "fg_alb_target_group_http_arn" {
-  value       = module.fg_alb.alb_target_group_http_arn
-  description = "The ARN of the target group for the HTTP listener"
+output "fg_dns_endpoint" {
+  value       = var.alb_r53_dns_name == "" ? module.fg_alb.alb_dns_name : var.alb_r53_dns_name
+  description = "The DNS endpoint of the ALB"
+
 }
 
 # Create the web servers
@@ -101,13 +103,13 @@ module "fg_webserver" {
   source = "./modules/webserver"
 
   webserver_name     = "fg-webserver"
-  webserver_key_name = "simple-ec2-key"
+  webserver_key_name = var.webserver_key_name # "simple-ec2-key"
 
   webserver_vpc_id     = module.fg_vpc.vpc_id
   webserver_subnet_ids = module.fg_vpc.private_subnet_ids
 
   http_target_group_arn = module.fg_alb.alb_target_group_http_arn
-  http_port             = 8080
+  http_port             = var.backend_webserver_port
 
   bastion_security_group_id = module.fg_bastion.bastion_security_group_id
   alb_security_group_id     = module.fg_alb.alb_security_group_id
