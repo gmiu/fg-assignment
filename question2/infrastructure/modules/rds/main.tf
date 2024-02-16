@@ -42,3 +42,15 @@ module "rds_sg" {
     },
   ]
 }
+
+# allow traffic from bastion for DB admin purposes
+resource "aws_security_group_rule" "allow_bastion_on_rds" {
+  count = var.bastion_security_group_id != "" ? 1 : 0
+
+  type                     = "ingress"
+  from_port                = var.rds_db_port
+  to_port                  = var.rds_db_port
+  protocol                 = "tcp"
+  security_group_id        = module.rds_sg.security_group_id
+  source_security_group_id = var.bastion_security_group_id
+}

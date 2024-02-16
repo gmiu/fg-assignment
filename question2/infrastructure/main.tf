@@ -49,6 +49,8 @@ module "fg_database" {
 
   rds_vpc_id               = module.fg_vpc.vpc_id
   rds_db_subnet_group_name = module.fg_vpc.database_subnet_group
+
+  bastion_security_group_id = module.fg_bastion.bastion_security_group_id
 }
 
 output "fg_database_endpoint" {
