@@ -4,7 +4,7 @@ output "alb_security_group_id" {
 }
 
 output "alb_target_group_http_arn" {
-  value       = module.alb.target_groups.http.arn
+  value       = module.alb.target_groups.http_8080.arn
   description = "The ARN of the HTTP target group"
 }
 

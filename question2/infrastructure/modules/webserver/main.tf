@@ -50,11 +50,11 @@ module "webserver_sg" {
 }
 
 resource "aws_security_group_rule" "allow_webserver_on_rds" {
-  type        = "ingress"
-  from_port   = var.rds_port
-  to_port     = var.rds_port
-  protocol    = "tcp"
-  security_group_id = var.rds_security_group_id
+  type                     = "ingress"
+  from_port                = var.rds_port
+  to_port                  = var.rds_port
+  protocol                 = "tcp"
+  security_group_id        = var.rds_security_group_id
   source_security_group_id = module.webserver_sg.security_group_id
 }
 
@@ -62,4 +62,5 @@ resource "aws_lb_target_group_attachment" "webserver_attachment" {
   count            = var.webserver_count
   target_group_arn = var.http_target_group_arn
   target_id        = module.webserver[count.index].id
+  port             = var.http_port
 }
