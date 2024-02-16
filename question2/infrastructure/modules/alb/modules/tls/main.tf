@@ -17,7 +17,7 @@ variable "wait_for_validation" {
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
   }
 }
