@@ -47,6 +47,7 @@ module "webserver-sg" {
   ]
 }
 
+# done
 resource "aws_lb_target_group" "webserver-tg" {
   name     = "fg-webserver-tg"
   port     = 80
@@ -72,6 +73,7 @@ resource "aws_security_group_rule" "webserver_allow_lb_traffic" {
   }
 }
 
+# done
 resource "aws_lb_listener" "webserver-https" {
   load_balancer_arn = data.terraform_remote_state.alb.outputs.alb.arn
   port              = "443"
