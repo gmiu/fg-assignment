@@ -75,6 +75,6 @@ variable "rds_vpc_id" {
 
 variable "bastion_security_group_id" {
   type        = string
-  default = ""
+  default     = ""
   description = "The security group ID of the bastion host"
 }
