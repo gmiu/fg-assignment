@@ -12,7 +12,7 @@ variable "bastion_instance_type" {
 
 variable "bastion_ami_id" {
   type        = string
-  default     = "ami-0e731c8a588258d0d" # Amazon Linux 2023 x86_64 HVM GP2
+  default     = "ami-0440d3b780d96b29d" # Amazon Linux 2023 x86_64 HVM GP2
   description = "The AMI to use for the bastion host. Default is Amazon Linux 2023 x86_64 HVM GP2"
 }
 
