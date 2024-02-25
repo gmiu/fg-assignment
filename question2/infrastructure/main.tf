@@ -69,6 +69,15 @@ output "fg_database_master_user_secret_arn" {
   description = "The ARN of the secret containing the master user credentials for the RDS MySQL DB"
 }
 
+data "aws_secretsmanager_secret" "fg_database_master_user_secret" {
+  arn = module.fg_database.rds_master_user_secret_arn
+}
+
+output "fg_database_master_user_secret_name" {
+  value = data.aws_secretsmanager_secret.fg_database_master_user_secret.name
+}
+
+
 # Create the ALB
 module "fg_alb" {
   source = "./modules/alb"
@@ -121,4 +130,15 @@ module "fg_webserver" {
 output "fg_webserver_private_ips" {
   value       = module.fg_webserver.webserver_private_ips
   description = "The private IPs of the web servers"
+}
+
+
+resource local_file group_vars {
+  filename             = "${path.module}/../ansible/group_vars/all/from_terraform.yaml"
+  content = templatefile("${path.module}/templates/group_vars.tpl", {
+    rds_host = module.fg_database.rds_address
+    rds_db = module.fg_database.rds_db_name
+    rds_user = module.fg_database.rds_username
+    rds_pass_secret_name = data.aws_secretsmanager_secret.fg_database_master_user_secret.name
+  })
 }

@@ -1,0 +1,15 @@
+[Unit]
+Description=Test App
+After=network.target
+
+[Service]
+WorkingDirectory={{ app_directory }}
+Environment="PATH={{ app_directory }}/venv/bin"
+Environment="DB_HOST={{ rds_host }}"
+Environment="DB_USER={{ rds_user }}"
+Environment="DB_PASS={{ lookup("amazon.aws.aws_secret", rds_pass_secret_name ~".password", nested=true) }}"
+Environment="DB_NAME={{ rds_db }}"
+ExecStart={{ app_directory }}/venv/bin/python {{ app_directory }}/app.py
+
+[Install]
+WantedBy=multi-user.target

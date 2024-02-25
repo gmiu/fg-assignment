@@ -17,3 +17,13 @@ output "rds_master_user_secret_arn" {
   value       = module.rds.db_instance_master_user_secret_arn
   description = "The ARN of the secret for the master user of the RDS instance"
 }
+
+output "rds_username" {
+  value       = module.rds.db_instance_username
+  description = "The username of the master user of the RDS instance"
+}
+
+output "rds_db_name" {
+  value       = module.rds.db_instance_name
+  description = "The name of the database in the RDS instance"
+}

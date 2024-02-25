@@ -36,7 +36,7 @@
 | <a name="input_http_target_group_arn"></a> [http\_target\_group\_arn](#input\_http\_target\_group\_arn) | The ARN of the target group for the web servers | `string` | n/a | yes |
 | <a name="input_rds_port"></a> [rds\_port](#input\_rds\_port) | The port on which the RDS instance listens | `number` | `3306` | no |
 | <a name="input_rds_security_group_id"></a> [rds\_security\_group\_id](#input\_rds\_security\_group\_id) | The security group ID of the RDS instance | `string` | n/a | yes |
-| <a name="input_webserver_ami_id"></a> [webserver\_ami\_id](#input\_webserver\_ami\_id) | The AMI to use for the web servers. Default is Amazon Linux 2023 x86\_64 HVM GP2 | `string` | `"ami-0e731c8a588258d0d"` | no |
+| <a name="input_webserver_ami_id"></a> [webserver\_ami\_id](#input\_webserver\_ami\_id) | The AMI to use for the web servers. Default is Amazon Linux 2023 x86\_64 HVM GP2 | `string` | `"ami-0440d3b780d96b29d"` | no |
 | <a name="input_webserver_count"></a> [webserver\_count](#input\_webserver\_count) | The number of web servers to create | `number` | `2` | no |
 | <a name="input_webserver_instance_type"></a> [webserver\_instance\_type](#input\_webserver\_instance\_type) | The instance type of the web servers | `string` | `"t2.micro"` | no |
 | <a name="input_webserver_key_name"></a> [webserver\_key\_name](#input\_webserver\_key\_name) | The name of the key pair to use for the web servers | `string` | n/a | yes |

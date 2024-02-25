@@ -25,7 +25,7 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_bastion_ami_id"></a> [bastion\_ami\_id](#input\_bastion\_ami\_id) | The AMI to use for the bastion host. Default is Amazon Linux 2023 x86\_64 HVM GP2 | `string` | `"ami-0e731c8a588258d0d"` | no |
+| <a name="input_bastion_ami_id"></a> [bastion\_ami\_id](#input\_bastion\_ami\_id) | The AMI to use for the bastion host. Default is Amazon Linux 2023 x86\_64 HVM GP2 | `string` | `"ami-0440d3b780d96b29d"` | no |
 | <a name="input_bastion_instance_type"></a> [bastion\_instance\_type](#input\_bastion\_instance\_type) | The instance type of the bastion host | `string` | `"t2.micro"` | no |
 | <a name="input_bastion_key_name"></a> [bastion\_key\_name](#input\_bastion\_key\_name) | The name of the key pair to use for the bastion host | `string` | n/a | yes |
 | <a name="input_bastion_name"></a> [bastion\_name](#input\_bastion\_name) | The name of the bastion host | `string` | `"bastion"` | no |
