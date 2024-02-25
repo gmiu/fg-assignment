@@ -1,0 +1,34 @@
+- name: Update all packages
+  ansible.builtin.dnf:
+    name: '*'
+    state: latest
+
+#TODO make it idempotent
+- name: Install MySQL community repository
+  command: dnf install https://dev.mysql.com/get/mysql80-community-release-el9-5.noarch.rpm -y
+
+- name: Import MySQL repository GPG key
+  ansible.builtin.rpm_key:
+    key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+    state: present
+
+- name: Install MySQL client
+  ansible.builtin.dnf:
+    name:
+      - mysql-community-client
+    state: present
+
+- name: Copy table.sql to the bastion
+  ansible.builtin.copy:
+    src: table.sql
+    dest: /tmp/table.sql
+
+- name: Template
+  ansible.builtin.template:
+    src: mysql_connection.conf.j2
+    dest: /tmp/mysql_connection.conf
+  tags:
+    - template
+
+- name: Run table.sql
+  shell: "mysql --defaults-extra-file=/tmp/mysql_connection.conf fgdb < /tmp/table.sql"

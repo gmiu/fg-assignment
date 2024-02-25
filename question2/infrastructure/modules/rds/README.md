@@ -49,7 +49,9 @@
 | Name | Description |
 |------|-------------|
 | <a name="output_rds_address"></a> [rds\_address](#output\_rds\_address) | The address of the RDS instance |
+| <a name="output_rds_db_name"></a> [rds\_db\_name](#output\_rds\_db\_name) | The name of the database in the RDS instance |
 | <a name="output_rds_endpoint"></a> [rds\_endpoint](#output\_rds\_endpoint) | The endpoint of the RDS instance |
 | <a name="output_rds_master_user_secret_arn"></a> [rds\_master\_user\_secret\_arn](#output\_rds\_master\_user\_secret\_arn) | The ARN of the secret for the master user of the RDS instance |
 | <a name="output_rds_security_group_id"></a> [rds\_security\_group\_id](#output\_rds\_security\_group\_id) | The ID of the security group for the RDS instance |
+| <a name="output_rds_username"></a> [rds\_username](#output\_rds\_username) | The username of the master user of the RDS instance |
 <!-- END_TF_DOCS -->

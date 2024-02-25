@@ -1,0 +1,4 @@
+[client]
+user = "{{ rds_user }}"
+password = "{{ lookup("amazon.aws.aws_secret", rds_pass_secret_name ~".password", nested=true) }}"
+host = "{{ rds_host }}"

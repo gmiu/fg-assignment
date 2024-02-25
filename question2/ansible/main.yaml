@@ -1,0 +1,23 @@
+---
+- hosts: bastion
+  gather_facts: no
+  become: yes
+  roles:
+    - bastion
+  tags:
+    - bastion
+
+- hosts: webserver
+  become: yes
+  gather_facts: no
+  vars:
+    - ansible_ssh_user: ec2-user
+    - bastion_host: "{{ groups['bastion'][0] }}"
+    - ansible_ssh_common_args: >
+          -o ProxyCommand="ssh -W %h:%p -q {{ ansible_ssh_user }}@{{ bastion_host }}" \
+          -o ServerAliveInterval=5 \
+          -o StrictHostKeyChecking=no
+  roles:
+    - webserver
+  tags:
+    - webserver

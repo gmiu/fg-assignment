@@ -1,7 +1,11 @@
 import logging
+
 from flask import Flask, request
+from gevent.pywsgi import WSGIServer
+
 import mysql.connector
 from mysql.connector import Error
+
 import os
 
 logging.basicConfig(filename='app.log', level=logging.INFO,
@@ -10,11 +14,10 @@ logging.basicConfig(filename='app.log', level=logging.INFO,
 
 app = Flask(__name__)
 
-# Read database configuration from environment variables
 db_config = {
     'host': os.environ.get('DB_HOST'),
     'user': os.environ.get('DB_USER'),
-    'password': os.environ.get('DB_PASSWORD'),
+    'password': os.environ.get('DB_PASS'),
     'database': os.environ.get('DB_NAME')
 }
 
@@ -53,19 +56,19 @@ def write_to_db():
     # This is where you'd capture data to write, for this example, we're hardcoding a message.
     message = 'Hello, MySQL!'
     result = insert_message(message)
-    return result
+    return f'Message "{message}" sent to the database! Actual status is "{result}!"<br><br><a href="/">Back to Home</a><br><a href="/read">Read messages</a>'
 
 @app.route('/write_custom', methods=['POST'])
 def write_custom():
     message = request.form['message']
     result = insert_message(message)  # Assuming you have a function like this to insert messages
-    return f'Message "{message}" sent to the database!'
+    return f'Message "{message}" sent to the database! Actual status is "{result}!<br><br><a href="/">Back to Home</a><br><a href="/read">Read messages</a>'
 
 @app.route('/read')
 def read_from_db():
     messages = get_messages()
     messages_str = '<br>'.join([f"Message read from DB: {msg[0]}" for msg in messages]) # Format messages as HTML
-    return messages_str if messages_str else "No messages found."
+    return f'{messages_str}<br><br><a href="/">Back to Home</a>'
 
 @app.route('/')
 def hello_world():
@@ -91,4 +94,5 @@ def hello_world():
     '''
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    http_server = WSGIServer(('', 8080), app)
+    http_server.serve_forever()

@@ -4,12 +4,14 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | 5.36.0 |
+| <a name="requirement_local"></a> [local](#requirement\_local) | 2.4.1 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 5.36.0 |
+| <a name="provider_local"></a> [local](#provider\_local) | 2.4.1 |
 
 ## Modules
 
@@ -25,12 +27,15 @@
 
 | Name | Type |
 |------|------|
+| [local_file.group_vars](https://registry.terraform.io/providers/hashicorp/local/2.4.1/docs/resources/file) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/data-sources/availability_zones) | data source |
+| [aws_secretsmanager_secret.fg_database_master_user_secret](https://registry.terraform.io/providers/hashicorp/aws/5.36.0/docs/data-sources/secretsmanager_secret) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_alb_certificate_arn"></a> [alb\_certificate\_arn](#input\_alb\_certificate\_arn) | The ARN of the certificate to use for the ALB | `string` | `""` | no |
 | <a name="input_alb_enable_deletion_protection"></a> [alb\_enable\_deletion\_protection](#input\_alb\_enable\_deletion\_protection) | Enable deletion protection for the ALB | `bool` | `false` | no |
 | <a name="input_alb_enable_tls"></a> [alb\_enable\_tls](#input\_alb\_enable\_tls) | Enable TLS for the ALB | `bool` | `false` | no |
 | <a name="input_alb_r53_dns_name"></a> [alb\_r53\_dns\_name](#input\_alb\_r53\_dns\_name) | The DNS name to use for the ALB | `string` | `""` | no |
@@ -53,6 +58,7 @@
 | <a name="output_fg_database_address"></a> [fg\_database\_address](#output\_fg\_database\_address) | The address of the RDS MySQL DB |
 | <a name="output_fg_database_endpoint"></a> [fg\_database\_endpoint](#output\_fg\_database\_endpoint) | The endpoint of the RDS MySQL DB |
 | <a name="output_fg_database_master_user_secret_arn"></a> [fg\_database\_master\_user\_secret\_arn](#output\_fg\_database\_master\_user\_secret\_arn) | The ARN of the secret containing the master user credentials for the RDS MySQL DB |
+| <a name="output_fg_database_master_user_secret_name"></a> [fg\_database\_master\_user\_secret\_name](#output\_fg\_database\_master\_user\_secret\_name) | n/a |
 | <a name="output_fg_dns_endpoint"></a> [fg\_dns\_endpoint](#output\_fg\_dns\_endpoint) | The DNS endpoint of the ALB |
 | <a name="output_fg_webserver_private_ips"></a> [fg\_webserver\_private\_ips](#output\_fg\_webserver\_private\_ips) | The private IPs of the web servers |
 <!-- END_TF_DOCS -->
