@@ -96,6 +96,7 @@ module "fg_alb" {
   route53_record = var.alb_r53_dns_name
 
   backend_port = var.backend_webserver_port
+  target_type  = var.alb_target_type
 }
 
 output "fg_alb_dns_name" {
@@ -109,36 +110,59 @@ output "fg_dns_endpoint" {
 
 }
 
-# Create the web servers
-module "fg_webserver" {
-  source = "./modules/webserver"
+data "aws_secretsmanager_secret_version" "fg_database_master_user_secret" {
+  secret_id = module.fg_database.rds_master_user_secret_arn
+}
 
-  webserver_name     = "fg-webserver"
-  webserver_key_name = var.webserver_key_name # "simple-ec2-key"
+module "fg_ecs" {
+  source = "./modules/ecs"
 
-  webserver_vpc_id     = module.fg_vpc.vpc_id
-  webserver_subnet_ids = module.fg_vpc.private_subnet_ids
-
+  cluster_name          = "fg-ecs"
+  service_name          = "fg-test-app"
+  subnet_ids            = module.fg_vpc.private_subnet_ids
+  alb_security_group_id = module.fg_alb.alb_security_group_id
   http_target_group_arn = module.fg_alb.alb_target_group_http_arn
   http_port             = var.backend_webserver_port
 
-  bastion_security_group_id = module.fg_bastion.bastion_security_group_id
-  alb_security_group_id     = module.fg_alb.alb_security_group_id
-  rds_security_group_id     = module.fg_database.rds_security_group_id
+  db_host = module.fg_database.rds_address
+  db_name = module.fg_database.rds_db_name
+  db_user = module.fg_database.rds_username
+  # TODO make secret retrieval more secure instead of passing the secret name
+  # secret can be seen in clear in the task definition JSON in the console
+  # attach IAM policy to the task role to allow it to retrieve the secret
+  db_pass = jsondecode(data.aws_secretsmanager_secret_version.fg_database_master_user_secret.secret_string)["password"]
 }
 
-output "fg_webserver_private_ips" {
-  value       = module.fg_webserver.webserver_private_ips
-  description = "The private IPs of the web servers"
-}
+# # Create the web servers
+# module "fg_webserver" {
+#   source = "./modules/webserver"
+
+#   webserver_name     = "fg-webserver"
+#   webserver_key_name = var.webserver_key_name # "simple-ec2-key"
+
+#   webserver_vpc_id     = module.fg_vpc.vpc_id
+#   webserver_subnet_ids = module.fg_vpc.private_subnet_ids
+
+#   http_target_group_arn = module.fg_alb.alb_target_group_http_arn
+#   http_port             = var.backend_webserver_port
+
+#   bastion_security_group_id = module.fg_bastion.bastion_security_group_id
+#   alb_security_group_id     = module.fg_alb.alb_security_group_id
+#   rds_security_group_id     = module.fg_database.rds_security_group_id
+# }
+
+# output "fg_webserver_private_ips" {
+#   value       = module.fg_webserver.webserver_private_ips
+#   description = "The private IPs of the web servers"
+# }
 
 
-resource local_file group_vars {
-  filename             = "${path.module}/../ansible/group_vars/all/from_terraform.yaml"
-  content = templatefile("${path.module}/templates/group_vars.tpl", {
-    rds_host = module.fg_database.rds_address
-    rds_db = module.fg_database.rds_db_name
-    rds_user = module.fg_database.rds_username
-    rds_pass_secret_name = data.aws_secretsmanager_secret.fg_database_master_user_secret.name
-  })
-}
+# resource local_file group_vars {
+#   filename             = "${path.module}/../ansible/group_vars/all/from_terraform.yaml"
+#   content = templatefile("${path.module}/templates/group_vars.tpl", {
+#     rds_host = module.fg_database.rds_address
+#     rds_db = module.fg_database.rds_db_name
+#     rds_user = module.fg_database.rds_username
+#     rds_pass_secret_name = data.aws_secretsmanager_secret.fg_database_master_user_secret.name
+#   })
+# }

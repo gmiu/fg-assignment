@@ -35,6 +35,7 @@ No resources.
 | <a name="input_backend_port"></a> [backend\_port](#input\_backend\_port) | The port of the backend service | `number` | `8080` | no |
 | <a name="input_route53_record"></a> [route53\_record](#input\_route53\_record) | The Route53 record | `string` | `""` | no |
 | <a name="input_route53_zone"></a> [route53\_zone](#input\_route53\_zone) | The Route53 zone name | `string` | `""` | no |
+| <a name="input_target_type"></a> [target\_type](#input\_target\_type) | The type of the target group | `string` | `"instance"` | no |
 
 ## Outputs
 

@@ -73,3 +73,9 @@ variable "backend_webserver_port" {
   default     = 8080
   description = "The port the webserver listens on"
 }
+
+variable "alb_target_type" {
+  type        = string
+  default     = "instance"
+  description = "The type of target to use for the ALB"
+}

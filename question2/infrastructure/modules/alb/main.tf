@@ -57,7 +57,7 @@ module "alb" {
     http_8080 = {
       backend_protocol  = "HTTP"
       port              = var.backend_port
-      target_type       = "instance"
+      target_type       = var.target_type
       create_attachment = false
     }
   }

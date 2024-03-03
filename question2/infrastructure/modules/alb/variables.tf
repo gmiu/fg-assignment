@@ -48,3 +48,9 @@ variable "backend_port" {
   default     = 8080
   description = "The port of the backend service"
 }
+
+variable "target_type" {
+  type        = string
+  default     = "instance"
+  description = "The type of the target group"
+}
