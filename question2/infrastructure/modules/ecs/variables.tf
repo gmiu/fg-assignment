@@ -48,3 +48,14 @@ variable "db_pass" {
   sensitive   = true
   description = "The password to use to connect to the database"
 }
+
+variable rds_security_group_id {
+  type        = string
+  description = "The security group ID of the RDS instance"
+}
+
+variable "rds_port" {
+  type        = number
+  default     = 3306
+  description = "The port on which the RDS instance listens"
+}

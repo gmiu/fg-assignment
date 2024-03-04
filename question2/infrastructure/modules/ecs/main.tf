@@ -86,3 +86,13 @@ module "ecs_service" {
     }
   }
 }
+
+# allow MySQL traffic from ECS to RDS
+resource "aws_security_group_rule" "allow_ecs_on_rds" {
+  type                     = "ingress"
+  from_port                = var.rds_port
+  to_port                  = var.rds_port
+  protocol                 = "tcp"
+  security_group_id        = var.rds_security_group_id
+  source_security_group_id = module.ecs_service.security_group_id
+}

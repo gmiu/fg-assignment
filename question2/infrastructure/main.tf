@@ -121,6 +121,7 @@ module "fg_ecs" {
   service_name          = "fg-test-app"
   subnet_ids            = module.fg_vpc.private_subnet_ids
   alb_security_group_id = module.fg_alb.alb_security_group_id
+  rds_security_group_id     = module.fg_database.rds_security_group_id
   http_target_group_arn = module.fg_alb.alb_target_group_http_arn
   http_port             = var.backend_webserver_port
 
@@ -157,12 +158,12 @@ module "fg_ecs" {
 # }
 
 
-# resource local_file group_vars {
-#   filename             = "${path.module}/../ansible/group_vars/all/from_terraform.yaml"
-#   content = templatefile("${path.module}/templates/group_vars.tpl", {
-#     rds_host = module.fg_database.rds_address
-#     rds_db = module.fg_database.rds_db_name
-#     rds_user = module.fg_database.rds_username
-#     rds_pass_secret_name = data.aws_secretsmanager_secret.fg_database_master_user_secret.name
-#   })
-# }
+resource local_file group_vars {
+  filename             = "${path.module}/../ansible/group_vars/all/from_terraform.yaml"
+  content = templatefile("${path.module}/templates/group_vars.tpl", {
+    rds_host = module.fg_database.rds_address
+    rds_db = module.fg_database.rds_db_name
+    rds_user = module.fg_database.rds_username
+    rds_pass_secret_name = data.aws_secretsmanager_secret.fg_database_master_user_secret.name
+  })
+}
